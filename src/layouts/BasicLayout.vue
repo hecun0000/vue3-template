@@ -63,8 +63,9 @@ import RightContent from '@/components/GlobalHeader/RightContent'
 import GlobalFooter from '@/components/GlobalFooter'
 import Ads from '@/components/Other/CarbonAds'
 import LogoSvg from '../assets/logo.svg?inline'
+import { defineComponent } from 'vue'
 
-export default {
+export default defineComponent({
   name: 'BasicLayout',
   components: {
     SettingDrawer,
@@ -123,8 +124,6 @@ export default {
     this.$watch('isMobile', () => {
       this.$store.commit(TOGGLE_MOBILE_TYPE, this.isMobile)
     })
-  },
-  mounted () {
     const userAgent = navigator.userAgent
     if (userAgent.indexOf('Edge') > -1) {
       this.$nextTick(() => {
@@ -177,7 +176,7 @@ export default {
       }
     }
   }
-}
+})
 </script>
 
 <style lang="less">

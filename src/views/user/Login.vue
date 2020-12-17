@@ -4,7 +4,8 @@
       id="formLogin"
       class="user-layout-login"
       ref="formLogin"
-      :form="form"
+      :model="form"
+      :rules="rules"
       @submit="handleSubmit"
     >
       <a-tabs
@@ -13,54 +14,64 @@
         @change="handleTabClick"
       >
         <a-tab-pane key="tab1" tab="账号密码登录">
-          <a-alert v-if="isLoginError" type="error" showIcon style="margin-bottom: 24px;" message="账户或密码错误（admin/ant.design )" />
+          <a-alert
+            v-if="isLoginError"
+            type="error"
+            showIcon
+            style="margin-bottom: 24px"
+            message="账户或密码错误（admin/ant.design )"
+          />
           <a-form-item>
             <a-input
               size="large"
               type="text"
               placeholder="账户: admin"
-              v-decorator="[
-                'username',
-                {rules: [{ required: true, message: '请输入帐户名或邮箱地址' }, { validator: handleUsernameOrEmail }], validateTrigger: 'change'}
-              ]"
+              v-model="form.username"
             >
-            <template v-slot:prefix>
-              <a-icon  type="user" :style="{ color: 'rgba(0,0,0,.25)' }"/>
-            </template>
+              <template v-slot:prefix>
+                <UserOutlined :style="{ color: 'rgba(0,0,0,.25)'}"/>
+              </template>
             </a-input>
           </a-form-item>
 
           <a-form-item>
-            <a-input-password
+            <a-input
               size="large"
               placeholder="密码: admin or ant.design"
-              v-decorator="[
-                'password',
-                {rules: [{ required: true, message: '请输入密码' }], validateTrigger: 'blur'}
-              ]"
+              v-model="form.password"
             >
-            <template v-slot:prefix>
-              <a-icon type="lock" :style="{ color: 'rgba(0,0,0,.25)' }"/>
-            </template>
-            </a-input-password>
+              <template v-slot:prefix>
+                <LockOutlined :style="{ color: 'rgba(0,0,0,.25)' }"/>
+              </template>
+            </a-input>
           </a-form-item>
         </a-tab-pane>
         <a-tab-pane key="tab2" tab="手机号登录">
           <a-form-item>
-            <a-input size="large" type="text" placeholder="手机号" v-decorator="['mobile', {rules: [{ required: true, pattern: /^1[34578]\d{9}$/, message: '请输入正确的手机号' }], validateTrigger: 'change'}]">
+            <a-input
+              size="large"
+              type="text"
+              placeholder="手机号"
+              v-model="form.mobile"
+            >
               <template v-slot:prefix>
-              <a-icon type="mobile" :style="{ color: 'rgba(0,0,0,.25)' }"/>
-            </template>
+                <MobileOutlined :style="{ color: 'rgba(0,0,0,.25)' }"/>
+              </template>
             </a-input>
           </a-form-item>
 
           <a-row :gutter="16">
             <a-col class="gutter-row" :span="16">
               <a-form-item>
-                <a-input size="large" type="text" placeholder="验证码" v-decorator="['captcha', {rules: [{ required: true, message: '请输入验证码' }], validateTrigger: 'blur'}]">
-                   <template v-slot:prefix>
-                  <a-icon type="mail" :style="{ color: 'rgba(0,0,0,.25)' }"/>
-            </template>
+                <a-input
+                  size="large"
+                  type="text"
+                  v-model="form.captcha"
+                  placeholder="验证码"
+                >
+                  <template v-slot:prefix>
+                    <MailOutlined :style="{ color: 'rgba(0,0,0,.25)' }"/>
+                  </template>
                 </a-input>
               </a-form-item>
             </a-col>
@@ -70,7 +81,9 @@
                 tabindex="-1"
                 :disabled="state.smsSendBtn"
                 @click.stop.prevent="getCaptcha"
-                v-text="!state.smsSendBtn && '获取验证码' || (state.time+' s')"
+                v-text="
+                  (!state.smsSendBtn && '获取验证码') || state.time + ' s'
+                "
               ></a-button>
             </a-col>
           </a-row>
@@ -78,15 +91,15 @@
       </a-tabs>
 
       <a-form-item>
-        <a-checkbox v-decorator="['rememberMe', { valuePropName: 'checked' }]">自动登录</a-checkbox>
-        <router-link
-          :to="{ name: 'recover', params: { user: 'aaa'} }"
+        <a-checkbox>自动登录</a-checkbox>
+        <!-- <router-link
+          :to="{ name: 'recover', params: { user: 'aaa' } }"
           class="forge-password"
-          style="float: right;"
-        >忘记密码</router-link>
+          style="float: right"
+          >忘记密码</router-link> -->
       </a-form-item>
 
-      <a-form-item style="margin-top:24px">
+      <a-form-item style="margin-top: 24px">
         <a-button
           size="large"
           type="primary"
@@ -94,22 +107,9 @@
           class="login-button"
           :loading="state.loginBtn"
           :disabled="state.loginBtn"
-        >确定</a-button>
+          >确定</a-button
+        >
       </a-form-item>
-
-      <div class="user-login-other">
-        <span>其他登录方式</span>
-        <a>
-          <a-icon class="item-icon" type="alipay-circle"></a-icon>
-        </a>
-        <a>
-          <a-icon class="item-icon" type="taobao-circle"></a-icon>
-        </a>
-        <a>
-          <a-icon class="item-icon" type="weibo-circle"></a-icon>
-        </a>
-        <router-link class="register" :to="{ name: 'register' }">注册账户</router-link>
-      </div>
     </a-form>
 
     <two-step-captcha
@@ -127,9 +127,14 @@ import TwoStepCaptcha from '@/components/tools/TwoStepCaptcha'
 import { mapActions } from 'vuex'
 import { timeFix } from '@/utils/util'
 import { getSmsCaptcha, get2step } from '@/api/login'
+import { UserOutlined, LockOutlined, MobileOutlined, MailOutlined } from '@ant-design/icons-vue'
 
 export default {
   components: {
+    UserOutlined,
+    LockOutlined,
+    MobileOutlined,
+    MailOutlined,
     TwoStepCaptcha
   },
   data () {
@@ -141,19 +146,35 @@ export default {
       isLoginError: false,
       requiredTwoStepCaptcha: false,
       stepCaptchaVisible: false,
-      form: this.$form.createForm(this),
+      form: {},
       state: {
         time: 60,
         loginBtn: false,
         // login type: 0 email, 1 username, 2 telephone
         loginType: 0,
         smsSendBtn: false
+      },
+      rules: {
+        username: [
+          { required: true, message: '请输入帐户名或邮箱地址', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' }
+        ],
+        mobile: [
+          { required: true, message: '请输入正确的手机号', trigger: 'blur' }
+        ],
+        captcha: [
+          { required: true, message: '请输入验证码', trigger: 'blur' }
+        ]
       }
     }
   },
   created () {
-    get2step({ })
-      .then(res => {
+    console.log(11111111111111)
+    get2step({})
+      .then((res) => {
+        console.log(res)
         this.requiredTwoStepCaptcha = res.result.stepCode
       })
       .catch(() => {
@@ -181,7 +202,6 @@ export default {
     handleSubmit (e) {
       e.preventDefault()
       const {
-        form: { validateFields },
         state,
         customActiveKey,
         Login
@@ -189,18 +209,22 @@ export default {
 
       state.loginBtn = true
 
-      const validateFieldsKey = customActiveKey === 'tab1' ? ['username', 'password'] : ['mobile', 'captcha']
+      const validateFieldsKey =
+        customActiveKey === 'tab1'
+          ? ['username', 'password']
+          : ['mobile', 'captcha']
 
-      validateFields(validateFieldsKey, { force: true }, (err, values) => {
+      this.$refs.formLogin.validateFields(validateFieldsKey, { force: true }, (err, values) => {
         if (!err) {
           console.log('login form', values)
           const loginParams = { ...values }
           delete loginParams.username
-          loginParams[!state.loginType ? 'email' : 'username'] = values.username
+          loginParams[!state.loginType ? 'email' : 'username'] =
+            values.username
           loginParams.password = md5(values.password)
           Login(loginParams)
             .then((res) => this.loginSuccess(res))
-            .catch(err => this.requestFailed(err))
+            .catch((err) => this.requestFailed(err))
             .finally(() => {
               state.loginBtn = false
             })
@@ -213,7 +237,10 @@ export default {
     },
     getCaptcha (e) {
       e.preventDefault()
-      const { form: { validateFields }, state } = this
+      const {
+        form: { validateFields },
+        state
+      } = this
 
       validateFields(['mobile'], { force: true }, (err, values) => {
         if (!err) {
@@ -228,20 +255,23 @@ export default {
           }, 1000)
 
           const hide = this.$message.loading('验证码发送中..', 0)
-          getSmsCaptcha({ mobile: values.mobile }).then(res => {
-            setTimeout(hide, 2500)
-            this.$notification.success({
-              message: '提示',
-              description: '验证码获取成功，您的验证码为：' + res.result.captcha,
-              duration: 8
+          getSmsCaptcha({ mobile: values.mobile })
+            .then((res) => {
+              setTimeout(hide, 2500)
+              this.$notification.success({
+                message: '提示',
+                description:
+                  '验证码获取成功，您的验证码为：' + res.result.captcha,
+                duration: 8
+              })
             })
-          }).catch(err => {
-            setTimeout(hide, 1)
-            clearInterval(interval)
-            state.time = 60
-            state.smsSendBtn = false
-            this.requestFailed(err)
-          })
+            .catch((err) => {
+              setTimeout(hide, 1)
+              clearInterval(interval)
+              state.time = 60
+              state.smsSendBtn = false
+              this.requestFailed(err)
+            })
         }
       })
     },
@@ -281,7 +311,9 @@ export default {
       this.isLoginError = true
       this.$notification.error({
         message: '错误',
-        description: ((err.response || {}).data || {}).message || '请求出现错误，请稍后再试',
+        description:
+          ((err.response || {}).data || {}).message ||
+          '请求出现错误，请稍后再试',
         duration: 4
       })
     }
@@ -333,6 +365,9 @@ export default {
     .register {
       float: right;
     }
+  }
+  /deep/ .ant-col {
+    width: 100%;
   }
 }
 </style>
