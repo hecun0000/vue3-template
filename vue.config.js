@@ -4,7 +4,6 @@ function resolve (dir) {
   return path.join(__dirname, dir)
 }
 
-
 const isProd = process.env.NODE_ENV === 'production'
 
 const assetsCDN = {
@@ -30,21 +29,26 @@ module.exports = {
     config.resolve.alias
       .set('@$', resolve('src'))
 
+    // svg
     const svgRule = config.module.rule('svg')
     svgRule.uses.clear()
     svgRule
-      .oneOf('inline')
-      .resourceQuery(/inline/)
-      .use('vue-svg-icon-loader')
-      .loader('vue-svg-icon-loader')
+      .test(/\.svg$/)
+      .include.add(path.resolve(__dirname, 'src/assets/icons'))
       .end()
+      .use('svg-sprite-loader')
+      .loader('svg-sprite-loader')
+      .options({
+        symbolId: 'icon-[name]'
+      })
+    const fileRule = config.module.rule('file')
+    fileRule.uses.clear()
+    fileRule
+      .test(/\.svg$/)
+      .exclude.add(path.resolve(__dirname, 'src/assets/icons'))
       .end()
-      .oneOf('external')
       .use('file-loader')
       .loader('file-loader')
-      .options({
-        name: 'assets/[name].[hash:8].[ext]'
-      })
 
     // if prod is on
     // assets require on cdn

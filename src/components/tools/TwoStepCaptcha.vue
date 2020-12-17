@@ -2,12 +2,12 @@
   <!-- 两步验证 -->
   <a-modal
     centered
-    v-model="visible"
+    v-model.sync="visible"
     @cancel="handleCancel"
     :maskClosable="false"
   >
-    <div slot="title" :style="{ textAlign: 'center' }">两步验证</div>
-    <template slot="footer">
+    <div :style="{ textAlign: 'center' }">两步验证</div>
+    <template v-slot:footer>
       <div :style="{ textAlign: 'center' }">
         <a-button key="back" @click="handleCancel">返回</a-button>
         <a-button key="submit" type="primary" :loading="stepLoading" @click="handleStepOk">
@@ -27,7 +27,7 @@
             fieldDecoratorId="stepCode"
             :fieldDecoratorOptions="{rules: [{ required: true, message: '请输入 6 位动态码!', pattern: /^\d{6}$/, len: 6 }]}"
           >
-            <a-input :style="{ textAlign: 'center' }" @keyup.enter.native="handleStepOk" placeholder="000000" />
+            <a-input :style="{ textAlign: 'center' }" @keyup.enter="handleStepOk" placeholder="000000" />
           </a-form-item>
           <p style="text-align: center">
             <a @click="onForgeStepCode">遗失手机?</a>
@@ -41,7 +41,7 @@
 <script>
 export default {
   props: {
-    visible: {
+    pvisible: {
       type: Boolean,
       default: false
     }
@@ -49,20 +49,19 @@ export default {
   data () {
     return {
       stepLoading: false,
-
+      visible: this.pvisible,
       form: null
     }
   },
   methods: {
     handleStepOk () {
-      const vm = this
       this.stepLoading = true
       this.form.validateFields((err, values) => {
         if (!err) {
           console.log('values', values)
           setTimeout(() => {
-            vm.stepLoading = false
-            vm.$emit('success', { values })
+            this.stepLoading = false
+            this.$emit('success', { values })
           }, 2000)
           return
         }
@@ -73,9 +72,6 @@ export default {
     handleCancel () {
       this.visible = false
       this.$emit('cancel')
-    },
-    onForgeStepCode () {
-
     }
   }
 }

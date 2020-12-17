@@ -89,7 +89,6 @@ const user = {
           resolve()
         }).catch(() => {
           resolve()
-        }).finally(() => {
         })
       })
     }

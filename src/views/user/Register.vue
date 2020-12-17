@@ -16,7 +16,7 @@
         :trigger="['focus']"
         :getPopupContainer="(trigger) => trigger.parentElement"
         v-model="state.passwordLevelChecked">
-        <template slot="content">
+        <template v-slot:content>
           <div :style="{ width: '240px' }" >
             <div :class="['user-register', passwordLevelClass]">强度：<span>{{ passwordLevelName }}</span></div>
             <a-progress :percent="state.percent" :showInfo="false" :strokeColor=" passwordLevelColor " />
@@ -45,10 +45,12 @@
 
       <a-form-item>
         <a-input size="large" placeholder="11 位手机号" v-decorator="['mobile', {rules: [{ required: true, message: '请输入正确的手机号', pattern: /^1[3456789]\d{9}$/ }, { validator: this.handlePhoneCheck } ], validateTrigger: ['change', 'blur'] }]">
-          <a-select slot="addonBefore" size="large" defaultValue="+86">
+          <template v-slot:addonBefore>
+          <a-select size="large" defaultValue="+86">
             <a-select-option value="+86">+86</a-select-option>
             <a-select-option value="+87">+87</a-select-option>
           </a-select>
+          </template>
         </a-input>
       </a-form-item>
       <!--<a-input-group size="large" compact>
@@ -63,7 +65,9 @@
         <a-col class="gutter-row" :span="16">
           <a-form-item>
             <a-input size="large" type="text" placeholder="验证码" v-decorator="['captcha', {rules: [{ required: true, message: '请输入验证码' }], validateTrigger: 'blur'}]">
-              <a-icon slot="prefix" type="mail" :style="{ color: 'rgba(0,0,0,.25)' }"/>
+               <template v-slot:prefix>
+              <a-icon type="mail" :style="{ color: 'rgba(0,0,0,.25)' }"/>
+               </template>
             </a-input>
           </a-form-item>
         </a-col>
@@ -237,7 +241,7 @@ export default {
 
             getSmsCaptcha({ mobile: values.mobile }).then(res => {
               setTimeout(hide, 2500)
-              $notification['success']({
+              $notification.success({
                 message: '提示',
                 description: '验证码获取成功，您的验证码为：' + res.result.captcha,
                 duration: 8
@@ -254,7 +258,7 @@ export default {
       )
     },
     requestFailed (err) {
-      this.$notification['error']({
+      this.$notification.error({
         message: '错误',
         description: ((err.response || {}).data || {}).message || '请求出现错误，请稍后再试',
         duration: 4
