@@ -113,7 +113,7 @@ export default {
       mainMenu: state => state.permission.addRouters
     })
   },
-  created () {
+  mounted () {
     const routes = this.mainMenu.find(item => item.path === '/')
     this.menus = (routes && routes.children) || []
     // 处理侧栏收起状态

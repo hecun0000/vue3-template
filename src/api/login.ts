@@ -24,7 +24,7 @@ const userApi = {
  * @param parameter
  * @returns {*}
  */
-export function login (parameter) {
+export function login (parameter: any) {
   return request({
     url: userApi.Login,
     method: 'post',
@@ -32,7 +32,7 @@ export function login (parameter) {
   })
 }
 
-export function getSmsCaptcha (parameter) {
+export function getSmsCaptcha (parameter: any) {
   return request({
     url: userApi.SendSms,
     method: 'post',
@@ -71,7 +71,7 @@ export function logout () {
  * get user 2step code open?
  * @param parameter {*}
  */
-export function get2step (parameter) {
+export function get2step (parameter: any) {
   return request({
     url: userApi.twoStepCode,
     method: 'post',

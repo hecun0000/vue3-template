@@ -10,32 +10,30 @@ export function welcome () {
   return arr[index]
 }
 
-
-
-interface EventProps extends Event {
-  eventType: string;
-}
+// interface EventProps extends Event {
+//   eventType: string;
+// }
 
 /**
  * 触发 window.resize
  */
 export function triggerWindowResizeEvent () {
-  const event: EventProps = document.createEvent('HTMLEvents')
+  const event: any = document.createEvent('HTMLEvents')
   event.initEvent('resize', true, true)
   event.eventType = 'message'
   window.dispatchEvent(event)
 }
 
-export function handleScrollHeader (callback) {
+export function handleScrollHeader (callback: Function) {
   let timer = 0
 
   let beforeScrollTop = window.pageYOffset
   callback = callback || (() => ({}))
   window.addEventListener(
     'scroll',
-    _ => {
+    () => {
       clearTimeout(timer)
-      timer = setTimeout(() => {
+      timer = window.setTimeout(() => {
         let direction = 'up'
         const afterScrollTop = window.pageYOffset
         const delta = afterScrollTop - beforeScrollTop
@@ -53,7 +51,7 @@ export function handleScrollHeader (callback) {
 
 export function isIE () {
   const bw = window.navigator.userAgent
-  const compare = (s) => bw.indexOf(s) >= 0
+  const compare = (s: string) => bw.indexOf(s) >= 0
   const ie11 = (() => 'ActiveXObject' in window)()
   return compare('MSIE') || ie11
 }
@@ -68,6 +66,9 @@ export function removeLoadingAnimate (id = '', timeout = 1500) {
     return
   }
   setTimeout(() => {
-    document.body.removeChild(document.getElementById(id))
+    const idElement = document.getElementById(id)
+    if (idElement) {
+      document.body.removeChild(idElement)
+    }
   }, timeout)
 }

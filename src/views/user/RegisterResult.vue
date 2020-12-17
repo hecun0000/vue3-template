@@ -28,7 +28,7 @@ export default {
       return `你的账户：${v} 注册成功`
     }
   },
-  created () {
+  mounted () {
     this.form = this.$route.params
   },
   methods: {

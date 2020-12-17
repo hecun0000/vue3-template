@@ -1,34 +1,36 @@
-import Vue from 'vue'
-import VueI18n from 'vue-i18n'
+import { createI18n } from 'vue-i18n'
 import storage from 'store'
 import moment from 'moment'
+import type { I18n, I18nOptions } from 'vue-i18n'
 
 // default lang
 import enUS from './lang/en-US'
 
-Vue.use(VueI18n)
-
 export const defaultLang = 'en-US'
 
-const messages = {
+const messages: any = {
   'en-US': {
     ...enUS
   }
 }
 
-const i18n = new VueI18n({
+const config: I18nOptions = {
   silentTranslationWarn: true,
   locale: defaultLang,
   fallbackLocale: defaultLang,
   messages
-})
+}
+const i18n: any = createI18n(config)
 
 const loadedLanguages = [defaultLang]
 
-function setI18nLanguage (lang) {
+function setI18nLanguage (lang: string) {
   i18n.locale = lang
   // request.headers['Accept-Language'] = lang
-  document.querySelector('html').setAttribute('lang', lang)
+  const html = document.querySelector('html')
+  if (html) {
+    html.setAttribute('lang', lang)
+  }
   return lang
 }
 
@@ -52,7 +54,7 @@ export function loadLanguageAsync (lang = defaultLang) {
   })
 }
 
-export function i18nRender (key) {
+export function i18nRender (key: any) {
   return i18n.t(`${key}`)
 }
 

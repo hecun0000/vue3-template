@@ -40,7 +40,7 @@ export default {
       this.autoSwitchTab()
     }
   },
-  created () {
+  mounted () {
     if (this.value) {
       this.autoSwitchTab()
     }
