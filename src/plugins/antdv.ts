@@ -42,8 +42,7 @@ import {
   Result,
   Statistic,
   Descriptions,
-  Space,
-  message
+  Space
   // notification,
 } from 'ant-design-vue'
 // import Viser from 'viser-vue'

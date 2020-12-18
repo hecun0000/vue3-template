@@ -15,7 +15,7 @@
     "axios": "^0.21.0",
     "core-js": "^3.6.5",
     "md5": "^2.3.0",
-    "mockjs2": "^1.0.8",
+    "mockjs": "^1.1.0",
     "moment": "^2.24.1",
     "store": "^2.0.12",
     "vue": "^3.0.0",
@@ -26,6 +26,7 @@
   "devDependencies": {
     "@types/chai": "^4.2.11",
     "@types/mocha": "^5.2.4",
+    "@types/mockjs": "^1.0.3",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",
     "@vue/cli-plugin-babel": "~4.5.0",

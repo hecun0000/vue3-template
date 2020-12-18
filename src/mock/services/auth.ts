@@ -1,4 +1,4 @@
-import Mock from 'mockjs2'
+import * as Mock from 'mockjs'
 import { builder, getBody } from '../util'
 
 const username = ['admin', 'super']
@@ -6,7 +6,7 @@ const username = ['admin', 'super']
 // '21232f297a57a5a743894a0e4a801fc3',
 const password = ['8914de686ab28dc22f30d3d8e107ff6c', '21232f297a57a5a743894a0e4a801fc3'] // admin, ant.design
 
-const login = (options) => {
+const login = (options: any) => {
   const body = getBody(options)
   console.log('mock: body', body)
   if (!username.includes(body.username) || !password.includes(body.password)) {
@@ -14,21 +14,21 @@ const login = (options) => {
   }
 
   return builder({
-    'id': Mock.mock('@guid'),
-    'name': Mock.mock('@name'),
-    'username': 'admin',
-    'password': '',
-    'avatar': 'https://gw.alipayobjects.com/zos/rmsportal/jZUIxmJycoymBprLOUbT.png',
-    'status': 1,
-    'telephone': '',
-    'lastLoginIp': '27.154.74.117',
-    'lastLoginTime': 1534837621348,
-    'creatorId': 'admin',
-    'createTime': 1497160610259,
-    'deleted': 0,
-    'roleId': 'admin',
-    'lang': 'zh-CN',
-    'token': '4291d7da9005377ec9aec4a71ea837f'
+    id: Mock.mock('@guid'),
+    name: Mock.mock('@name'),
+    username: 'admin',
+    password: '',
+    avatar: 'https://gw.alipayobjects.com/zos/rmsportal/jZUIxmJycoymBprLOUbT.png',
+    status: 1,
+    telephone: '',
+    lastLoginIp: '27.154.74.117',
+    lastLoginTime: 1534837621348,
+    creatorId: 'admin',
+    createTime: 1497160610259,
+    deleted: 0,
+    roleId: 'admin',
+    lang: 'zh-CN',
+    token: '4291d7da9005377ec9aec4a71ea837f'
   }, '', 200, { 'Custom-Header': Mock.mock('@guid') })
 }
 

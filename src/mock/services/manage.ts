@@ -1,9 +1,9 @@
-import Mock from 'mockjs2'
+import * as Mock from 'mockjs'
 import { builder, getQueryParameters } from '../util'
 
 const totalCount = 5701
 
-const serverList = (options) => {
+const serverList = (options: any) => {
   const parameters = getQueryParameters(options)
 
   const result = []
@@ -38,7 +38,7 @@ const serverList = (options) => {
 
 const projects = () => {
   return builder({
-    'data': [{
+    data: [{
       id: 1,
       cover: 'https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png',
       title: 'Alipay',
@@ -87,10 +87,10 @@ const projects = () => {
       updatedAt: '2018-07-26 00:00:00'
     }
     ],
-    'pageSize': 10,
-    'pageNo': 0,
-    'totalPage': 6,
-    'totalCount': 57
+    pageSize: 10,
+    pageNo: 0,
+    totalPage: 6,
+    totalCount: 57
   })
 }
 
@@ -208,39 +208,39 @@ const teams = () => {
 const radar = () => {
   return builder([{
     item: '引用',
-    '个人': 70,
-    '团队': 30,
-    '部门': 40
+    个人: 70,
+    团队: 30,
+    部门: 40
   },
   {
     item: '口碑',
-    '个人': 60,
-    '团队': 70,
-    '部门': 40
+    个人: 60,
+    团队: 70,
+    部门: 40
   },
   {
     item: '产量',
-    '个人': 50,
-    '团队': 60,
-    '部门': 40
+    个人: 50,
+    团队: 60,
+    部门: 40
   },
   {
     item: '贡献',
-    '个人': 40,
-    '团队': 50,
-    '部门': 40
+    个人: 40,
+    团队: 50,
+    部门: 40
   },
   {
     item: '热度',
-    '个人': 60,
-    '团队': 70,
-    '部门': 40
+    个人: 60,
+    团队: 70,
+    部门: 40
   },
   {
     item: '引用',
-    '个人': 70,
-    '团队': 50,
-    '部门': 40
+    个人: 70,
+    团队: 50,
+    部门: 40
   }
   ])
 }

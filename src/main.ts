@@ -4,7 +4,7 @@ import router from './router'
 import store from './store'
 import { lazyAntd } from './plugins/antdv'
 import './global.less' // global style
-// import VueI18n from './locales'
+import VueI18n from './locales'
 // import { App as AppT } from '@types'
 
 // mock
@@ -17,6 +17,6 @@ lazyAntd(app)
 
 app
   .use(store)
-  // .use(VueI18n)
+  .use(VueI18n)
   .use(router)
   .mount('#app')

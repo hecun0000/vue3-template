@@ -1,6 +1,9 @@
 
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import { UserLayout, BasicLayout, BlankLayout } from '../layouts'
+import {
+  UserLayout
+  //  BasicLayout, BlankLayout
+} from '../layouts'
 // import Home from '../views/Home.vue'
 
 const routes: Array<RouteRecordRaw> = [

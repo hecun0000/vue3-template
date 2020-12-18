@@ -122,14 +122,19 @@
 </template>
 
 <script>
+import { defineComponent, onMounted, computed, ref, reactive, onUpdated, onUnmounted } from 'vue'
+import { useStore } from 'vuex'
+import { notification, message } from 'ant-design-vue'
+import { useRouter } from 'vue-router'
+import { useForm } from '@ant-design-vue/use'
+
 import md5 from 'md5'
 import TwoStepCaptcha from '@/components/tools/TwoStepCaptcha'
-import { mapActions } from 'vuex'
 import { timeFix } from '@/utils/util'
 import { getSmsCaptcha, get2step } from '@/api/login'
 import { UserOutlined, LockOutlined, MobileOutlined, MailOutlined } from '@ant-design/icons-vue'
 
-export default {
+export default defineComponent({
   components: {
     UserOutlined,
     LockOutlined,
@@ -137,56 +142,40 @@ export default {
     MailOutlined,
     TwoStepCaptcha
   },
-  data () {
-    return {
-      customActiveKey: 'tab1',
+  setup () {
+    const router = useRouter()
+
+    const store = useStore()
+    const Login = () => store.dispatch('Login')
+    const Logout = () => store.dispatch('Logout')
+
+    const requiredTwoStepCaptcha = ref(false)
+
+    onMounted(() => {
+      console.log('mounted!')
+      get2step({}).then((res) => {
+        console.log(res)
+        requiredTwoStepCaptcha.value = res.result.stepCode
+      }).catch(() => {
+        requiredTwoStepCaptcha.value = false
+      })
+    })
+
+    const customActiveKey = ref('tab1')
+
+    const handleTabClick = (key) => {
+      customActiveKey.value = key
+    }
+
+    const state = reactive({
+      time: 60,
       loginBtn: false,
       // login type: 0 email, 1 username, 2 telephone
       loginType: 0,
-      isLoginError: false,
-      requiredTwoStepCaptcha: false,
-      stepCaptchaVisible: false,
-      form: {},
-      state: {
-        time: 60,
-        loginBtn: false,
-        // login type: 0 email, 1 username, 2 telephone
-        loginType: 0,
-        smsSendBtn: false
-      },
-      rules: {
-        username: [
-          { required: true, message: '请输入帐户名或邮箱地址', trigger: 'blur' }
-        ],
-        password: [
-          { required: true, message: '请输入密码', trigger: 'blur' }
-        ],
-        mobile: [
-          { required: true, message: '请输入正确的手机号', trigger: 'blur' }
-        ],
-        captcha: [
-          { required: true, message: '请输入验证码', trigger: 'blur' }
-        ]
-      }
-    }
-  },
-  created () {
-    console.log(11111111111111)
-    get2step({})
-      .then((res) => {
-        console.log(res)
-        this.requiredTwoStepCaptcha = res.result.stepCode
-      })
-      .catch(() => {
-        this.requiredTwoStepCaptcha = false
-      })
-    // this.requiredTwoStepCaptcha = true
-  },
-  methods: {
-    ...mapActions(['Login', 'Logout']),
-    // handler
-    handleUsernameOrEmail (rule, value, callback) {
-      const { state } = this
+      smsSendBtn: false
+    })
+
+    const handleUsernameOrEmail = (rule, value, callback) => {
       const regex = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/
       if (regex.test(value)) {
         state.loginType = 0
@@ -194,25 +183,86 @@ export default {
         state.loginType = 1
       }
       callback()
-    },
-    handleTabClick (key) {
-      this.customActiveKey = key
-      // this.form.resetFields()
-    },
-    handleSubmit (e) {
+    }
+
+    const isLoginError = ref(false)
+    const requestFailed = (err) => {
+      isLoginError.value = true
+      notification.error({
+        message: '错误',
+        description:
+            ((err.response || {}).data || {}).message ||
+            '请求出现错误，请稍后再试',
+        duration: 4
+      })
+    }
+    const loginSuccess = (res) => {
+      console.log(res)
+      // check res.homePage define, set $router.push name res.homePage
+      // Why not enter onComplete
+      /*
+        this.$router.push({ name: 'analysis' }, () => {
+          console.log('onComplete')
+          this.$notification.success({
+            message: '欢迎',
+            description: `${timeFix()}，欢迎回来`
+          })
+        })
+        */
+      router.push({ path: '/' })
+      // 延迟 1 秒显示欢迎信息
+      setTimeout(() => {
+        notification.success({
+          message: '欢迎',
+          description: `${timeFix()}，欢迎回来`
+        })
+      }, 1000)
+      isLoginError.value = false
+    }
+
+    const loginBtn = ref(false)
+    const stepCaptchaVisible = ref(false)
+    const stepCaptchaCancel = () => {
+      Logout().then(() => {
+        loginBtn.value = false
+        stepCaptchaVisible.value = false
+      })
+    }
+
+    const stepCaptchaSuccess = () => loginSuccess()
+
+    const passRules = {
+      username: [
+        { required: true, message: '请输入帐户名或邮箱地址', trigger: 'blur' }
+      ],
+      password: [
+        { required: true, message: '请输入密码', trigger: 'blur' }
+      ]
+    }
+    const captchaRules = {
+      mobile: [
+        { required: true, message: '请输入正确的手机号', trigger: 'blur' }
+      ],
+      captcha: [
+        { required: true, message: '请输入验证码', trigger: 'blur' }
+      ]
+    }
+
+    const form = reactive({})
+    const rules = reactive({
+      ...passRules,
+      ...captchaRules
+    })
+
+    const handleSubmit = (e) => {
       e.preventDefault()
-      const {
-        state,
-        customActiveKey,
-        Login
-      } = this
 
       state.loginBtn = true
 
       const validateFieldsKey =
-        customActiveKey === 'tab1'
-          ? ['username', 'password']
-          : ['mobile', 'captcha']
+          customActiveKey.value === 'tab1'
+            ? ['username', 'password']
+            : ['mobile', 'captcha']
 
       this.$refs.formLogin.validateFields(validateFieldsKey, { force: true }, (err, values) => {
         if (!err) {
@@ -220,11 +270,11 @@ export default {
           const loginParams = { ...values }
           delete loginParams.username
           loginParams[!state.loginType ? 'email' : 'username'] =
-            values.username
+              values.username
           loginParams.password = md5(values.password)
           Login(loginParams)
-            .then((res) => this.loginSuccess(res))
-            .catch((err) => this.requestFailed(err))
+            .then((res) => loginSuccess(res))
+            .catch((err) => requestFailed(err))
             .finally(() => {
               state.loginBtn = false
             })
@@ -234,8 +284,9 @@ export default {
           }, 600)
         }
       })
-    },
-    getCaptcha (e) {
+    }
+
+    const getCaptcha = (e) => {
       e.preventDefault()
       const {
         form: { validateFields },
@@ -254,14 +305,14 @@ export default {
             }
           }, 1000)
 
-          const hide = this.$message.loading('验证码发送中..', 0)
+          const hide = message.loading('验证码发送中..', 0)
           getSmsCaptcha({ mobile: values.mobile })
             .then((res) => {
               setTimeout(hide, 2500)
-              this.$notification.success({
+              notification.success({
                 message: '提示',
                 description:
-                  '验证码获取成功，您的验证码为：' + res.result.captcha,
+                    '验证码获取成功，您的验证码为：' + res.result.captcha,
                 duration: 8
               })
             })
@@ -270,55 +321,29 @@ export default {
               clearInterval(interval)
               state.time = 60
               state.smsSendBtn = false
-              this.requestFailed(err)
+              requestFailed(err)
             })
         }
       })
-    },
-    stepCaptchaSuccess () {
-      this.loginSuccess()
-    },
-    stepCaptchaCancel () {
-      this.Logout().then(() => {
-        this.loginBtn = false
-        this.stepCaptchaVisible = false
-      })
-    },
-    loginSuccess (res) {
-      console.log(res)
-      // check res.homePage define, set $router.push name res.homePage
-      // Why not enter onComplete
-      /*
-      this.$router.push({ name: 'analysis' }, () => {
-        console.log('onComplete')
-        this.$notification.success({
-          message: '欢迎',
-          description: `${timeFix()}，欢迎回来`
-        })
-      })
-      */
-      this.$router.push({ path: '/' })
-      // 延迟 1 秒显示欢迎信息
-      setTimeout(() => {
-        this.$notification.success({
-          message: '欢迎',
-          description: `${timeFix()}，欢迎回来`
-        })
-      }, 1000)
-      this.isLoginError = false
-    },
-    requestFailed (err) {
-      this.isLoginError = true
-      this.$notification.error({
-        message: '错误',
-        description:
-          ((err.response || {}).data || {}).message ||
-          '请求出现错误，请稍后再试',
-        duration: 4
-      })
+    }
+
+    return {
+      form,
+      loginBtn,
+      stepCaptchaVisible,
+      requiredTwoStepCaptcha,
+      customActiveKey,
+      isLoginError,
+      state,
+      handleTabClick,
+      stepCaptchaSuccess,
+      stepCaptchaCancel,
+      handleSubmit,
+      getCaptcha,
+      rules
     }
   }
-}
+})
 </script>
 
 <style lang="less" scoped>

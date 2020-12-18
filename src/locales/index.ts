@@ -1,7 +1,7 @@
 import { createI18n } from 'vue-i18n'
 import storage from 'store'
 import moment from 'moment'
-import type { I18n, I18nOptions } from 'vue-i18n'
+import type { I18nOptions } from 'vue-i18n'
 
 // default lang
 import enUS from './lang/en-US'
