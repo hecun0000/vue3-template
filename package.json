@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",
+    "@types/md5": "^2.2.1",
     "@types/mocha": "^5.2.4",
     "@types/mockjs": "^1.0.3",
     "@typescript-eslint/eslint-plugin": "^2.33.0",

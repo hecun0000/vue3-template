@@ -2,11 +2,12 @@
   <!-- 两步验证 -->
   <a-modal
     centered
-    v-model.sync="visible"
+    v-model="visible"
     @cancel="handleCancel"
     :maskClosable="false"
   >
     <div :style="{ textAlign: 'center' }">两步验证</div>
+    {{ visible }} {{ pvisible }}
     <template v-slot:footer>
       <div :style="{ textAlign: 'center' }">
         <a-button key="back" @click="handleCancel">返回</a-button>
@@ -25,7 +26,6 @@
             :style="{ textAlign: 'center' }"
             hasFeedback
             fieldDecoratorId="stepCode"
-            :fieldDecoratorOptions="{rules: [{ required: true, message: '请输入 6 位动态码!', pattern: /^\d{6}$/, len: 6 }]}"
           >
             <a-input :style="{ textAlign: 'center' }" @keyup.enter="handleStepOk" placeholder="000000" />
           </a-form-item>
@@ -38,43 +38,59 @@
   </a-modal>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent, ref, reactive } from 'vue'
+import { useForm } from '@ant-design-vue/use'
+export default defineComponent({
   props: {
     pvisible: {
       type: Boolean,
       default: false
     }
   },
-  data () {
-    return {
-      stepLoading: false,
-      visible: this.pvisible,
-      form: null
-    }
-  },
-  methods: {
-    handleStepOk () {
-      this.stepLoading = true
-      this.form.validateFields((err, values) => {
-        if (!err) {
-          console.log('values', values)
-          setTimeout(() => {
-            this.stepLoading = false
-            this.$emit('success', { values })
-          }, 2000)
-          return
-        }
-        this.stepLoading = false
-        this.$emit('error', { err })
+  emits: ['success', 'cancel'],
+  setup (props, context) {
+    const stepLoading = ref<boolean>(false)
+    const visible = ref<boolean>(props.pvisible)
+    console.log(visible)
+    const form = ref<any>(null)
+
+    const rules = reactive({
+      stepCode: [
+        { required: true, message: '请输入 6 位动态码!', trigger: 'blur', pattern: /^\d{6}$/, len: 6 }
+      ]
+    })
+
+    const { validate, validateInfos } = useForm(form, rules)
+
+    const handleStepOk = () => {
+      stepLoading.value = true
+      validate(['stepCode']).then((values) => {
+        console.log('values', values)
+        setTimeout(() => {
+          stepLoading.value = false
+          context.emit('success', { values })
+        }, 2000)
       })
-    },
-    handleCancel () {
-      this.visible = false
-      this.$emit('cancel')
+    }
+
+    const handleCancel = () => {
+      console.log('sssssssssss')
+      visible.value = false
+      context.emit('cancel')
+    }
+
+    return {
+      stepLoading,
+      visible,
+      rules,
+      validateInfos,
+      form,
+      handleStepOk,
+      handleCancel
     }
   }
-}
+})
 </script>
 <style lang="less" scoped>
   .step-form-wrapper {

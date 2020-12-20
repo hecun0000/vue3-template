@@ -1,7 +1,6 @@
-import axios from 'axios'
+import axios, { AxiosError, AxiosResponse } from 'axios'
 import store from '@/store'
 import storage from 'store'
-// import { VueAxios } from 'axios'
 import notification from 'ant-design-vue/es/notification'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 
@@ -13,7 +12,7 @@ const request = axios.create({
 })
 
 // 异常拦截处理器
-const errorHandler = (error: any) => {
+const errorHandler = (error: AxiosError) => {
   if (error.response) {
     const data = error.response.data
     // 从 localstorage 获取 token

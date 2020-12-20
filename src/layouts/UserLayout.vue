@@ -30,9 +30,10 @@
 </template>
 
 <script>
+import { defineComponent } from 'vue'
 import { deviceMixin } from '@/store/device-mixin'
 
-export default {
+export default defineComponent({
   name: 'UserLayout',
   mixins: [deviceMixin],
   mounted () {
@@ -41,7 +42,7 @@ export default {
   beforeUnmount () {
     document.body.classList.remove('userLayout')
   }
-}
+})
 </script>
 
 <style lang="less" scoped>

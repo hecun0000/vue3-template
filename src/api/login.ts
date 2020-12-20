@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import { LoginParams, GetSmsCaptchaParams } from '@/api/loginModel'
 
 const userApi = {
   Login: '/auth/login',
@@ -24,7 +25,7 @@ const userApi = {
  * @param parameter
  * @returns {*}
  */
-export function login (parameter: any) {
+export function login (parameter: LoginParams) {
   return request({
     url: userApi.Login,
     method: 'post',
@@ -32,7 +33,7 @@ export function login (parameter: any) {
   })
 }
 
-export function getSmsCaptcha (parameter: any) {
+export function getSmsCaptcha (parameter: GetSmsCaptchaParams) {
   return request({
     url: userApi.SendSms,
     method: 'post',
@@ -71,10 +72,9 @@ export function logout () {
  * get user 2step code open?
  * @param parameter {*}
  */
-export function get2step (parameter: any) {
+export function get2step () {
   return request({
     url: userApi.twoStepCode,
-    method: 'post',
-    data: parameter
+    method: 'post'
   })
 }
