@@ -2,6 +2,8 @@
 import { UserLayout,
   //  BasicLayout, BlankLayout
 } from '../layouts'
+import { CustomRouteConfig } from '../interfaces/router-interface'
+
 // import { bxAnaalyse } from '@/core/icons'
 
 // const RouteView = {
@@ -346,7 +348,7 @@ export const asyncRouterMap = [
  * 基础路由
  * @type { *[] }
  */
-export const constantRouterMap = [
+export const constantRouterMap: Array<CustomRouteConfig> = [
   {
     path: '/user',
     component: UserLayout,
@@ -356,22 +358,17 @@ export const constantRouterMap = [
       {
         path: 'login',
         name: 'login',
-        component: () => import(/* webpackChunkName: "user" */ '@/views/user/Login')
+        component: () => import('@/views/user/Login.vue')
       },
       {
         path: 'register',
         name: 'register',
-        component: () => import(/* webpackChunkName: "user" */ '@/views/user/Register')
+        component: () => import('@/views/user/Register.vue')
       },
       {
         path: 'register-result',
         name: 'registerResult',
-        component: () => import(/* webpackChunkName: "user" */ '@/views/user/RegisterResult')
-      },
-      {
-        path: 'recover',
-        name: 'recover',
-        component: undefined
+        component: () => import('@/views/user/RegisterResult.vue')
       }
     ]
   }

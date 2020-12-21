@@ -370,8 +370,27 @@ const info = (options: any) => {
   return builder(userInfo)
 }
 
+export interface NavItemProps {
+    name: string;
+    path?: string;
+    key?: string;
+    parentId: number;
+    id: number;
+    meta: {
+      title: string;
+      show?: boolean;
+      icon?: string;
+      target?: string;
+      hiddenHeaderContent?: boolean;
+      hideHeader?: boolean;
+      hideChildren?: boolean;
+    };
+    component?: string;
+    redirect?: string;
+}
+
 const userNav = () => {
-  const nav = [
+  const nav: NavItemProps[] = [
     // dashboard
     {
       name: 'dashboard',

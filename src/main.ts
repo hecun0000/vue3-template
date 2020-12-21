@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import router from './router'
+import router from './router/index'
 import store from './store'
 import { lazyAntd } from './plugins/antdv'
 import './global.less' // global style

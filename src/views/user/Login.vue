@@ -261,14 +261,13 @@ export default defineComponent({
     const handleSubmit = (e: MouseEvent) => {
       e.preventDefault()
 
-      state.loginBtn = true
-
       const validateFieldsKey =
           customActiveKey.value === 'tab1'
             ? ['username', 'password']
             : ['mobile', 'captcha']
       console.log(validateFieldsKey, 'validateFieldsKey', form)
       validate(validateFieldsKey).then((values) => {
+        state.loginBtn = true
         console.log('login form', values)
         const loginParams = { ...values }
         delete loginParams.username
@@ -385,7 +384,7 @@ export default defineComponent({
       float: right;
     }
   }
-  /deep/ .ant-col {
+  :deep(.ant-col) {
     width: 100%;
   }
 }

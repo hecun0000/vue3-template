@@ -1,15 +1,14 @@
-import { BasicPageParams, BasicFetchResult } from '@/api/baseModel';
+import { BasicPageParams, BasicFetchResult } from '@/api/baseModel'
 
 export interface LoginParams {
   username: string;
   password: string;
   remember_me?: boolean;
-  captcha: string
+  captcha: string;
 }
 export interface GetSmsCaptchaParams {
   mobile: string;
 }
-
 
 /**
  * @description: Request list interface parameters
@@ -31,9 +30,8 @@ export interface DemoListItem {
  */
 export type DemoListGetResultModel = BasicFetchResult<DemoListItem>
 
-
 export interface StepCode {
-  stepCode: string
+  stepCode: string;
 }
 
 export type Get2StepResultModel = BasicFetchResult<StepCode>

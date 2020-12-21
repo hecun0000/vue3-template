@@ -51,7 +51,7 @@ export function getInfo () {
   })
 }
 
-export function getCurrentUserNav () {
+export function getCurrentUserNav (token: string) {
   return request({
     url: userApi.UserMenu,
     method: 'get'

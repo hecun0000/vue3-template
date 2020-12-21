@@ -30,7 +30,7 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx"
-, "src/api/login.ts", "src/store/index.ts"  ],
+, "src/api/login.ts", "src/store/index.ts", "src/router/index.js", "src/router/generator-routers.ts"  ],
   "exclude": [
     "node_modules"
   ]
