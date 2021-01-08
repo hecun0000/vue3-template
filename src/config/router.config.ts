@@ -369,6 +369,11 @@ export const constantRouterMap: Array<CustomRouteConfig> = [
         path: 'register-result',
         name: 'registerResult',
         component: () => import('@/views/user/RegisterResult.vue')
+      },
+      {
+        path: 'recover',
+        name: 'recover',
+        component: undefined
       }
     ]
   }

@@ -17,4 +17,6 @@ export interface Meta {
   hiddenHeaderContent?: any;
   target?: any;
   permission?: any;
+  show?: boolean;
+  hideChildren?: boolean;
 }

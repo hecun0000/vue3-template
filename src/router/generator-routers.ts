@@ -5,13 +5,16 @@ import { BasicLayout, BlankLayout, PageView, RouteView } from '@/layouts'
 import { NavItemProps } from "../mock/services/user";
 import { CustomRouteConfig } from '../interfaces/router-interface'
 
+interface routerMap {
+  [propName: string]: any;
+}
+
 // 前端路由表
-const constantRouterComponents = {
-  // 基础页面 layout 必须引入
-  BasicLayout: BasicLayout,
-  BlankLayout: BlankLayout,
-  RouteView: RouteView,
-  PageView: PageView
+const constantRouterComponents: routerMap = {
+  BasicLayout,
+  BlankLayout,
+  RouteView,
+  PageView
   // '403': () => import(/* webpackChunkName: "error" */ '@/views/exception/403'),
   // '404': () => import(/* webpackChunkName: "error" */ '@/views/exception/404'),
   // '500': () => import(/* webpackChunkName: "error" */ '@/views/exception/500'),
@@ -63,11 +66,11 @@ const notFoundRouter = {
 }
 
 // 根级菜单
-const rootRouter: = {
+const rootRouter: CustomRouteConfig = {
   key: '',
   name: 'index',
   path: '',
-  component: 'BasicLayout',
+  component: BasicLayout,
   redirect: '/dashboard',
   meta: {
     title: '首页'
@@ -85,8 +88,8 @@ export const generatorDynamicRouter = (token: string) => {
     loginService.getCurrentUserNav(token).then((res: any) => {
       console.log('res', res)
       const { result } = res
-      const menuNav = []
-      const childrenNav = []
+      const menuNav: CustomRouteConfig[] = []
+      const childrenNav: CustomRouteConfig[] = []
       //      后端数据, 根级树数组,  根级 PID
       listToTree(result, childrenNav, 0)
       rootRouter.children = childrenNav
@@ -109,10 +112,11 @@ export const generatorDynamicRouter = (token: string) => {
  * @param parent
  * @returns {*}
  */
-export const generator = (routerMap, parent) => {
-  return routerMap.map(item => {
+export const generator = (routerMap:  CustomRouteConfig[], parent?: CustomRouteConfig): CustomRouteConfig[] => {
+  return routerMap.map((item: CustomRouteConfig) => {
     const { title, show, hideChildren, hiddenHeaderContent, target, icon } = item.meta || {}
-    const currentRouter = {
+    const key = (item.component || item.key) as string
+    const currentRouter: CustomRouteConfig = {
       // 如果路由设置了 path，则作为默认 path，否则 路由地址 动态拼接生成如 /dashboard/workplace
       path: item.path || `${parent && parent.path || ''}/${item.key}`,
       // 路由名称，建议唯一
@@ -120,7 +124,7 @@ export const generator = (routerMap, parent) => {
       // 该路由对应页面的 组件 :方案1
       // component: constantRouterComponents[item.component || item.key],
       // 该路由对应页面的 组件 :方案2 (动态加载)
-      component: (constantRouterComponents[item.component || item.key]) || (() => import(`@/views/${item.component}`)),
+      component: (constantRouterComponents[key]) || (() => import(`@/views/${item.component}`)),
 
       // meta: 页面标题, 菜单图标, 页面权限(供指令权限用，可去掉)
       meta: {
