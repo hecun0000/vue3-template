@@ -72,8 +72,8 @@
 
       <a-row :gutter="16">
         <a-col class="gutter-row" :span="16">
-          <a-form-item>
-            <a-input size="large" type="text" placeholder="验证码">
+          <a-form-item v-bind="validateInfos.captcha">
+            <a-input size="large" type="text" placeholder="验证码"  v-model.value="form.captcha">
               <template v-slot:prefix>
                 <MailOutlined :style="{ color: 'rgba(0,0,0,.25)' }"/>
               </template>
@@ -172,17 +172,17 @@ export default defineComponent({
           if (level >= 3) {
             state.percent = 100
           }
-          resolve(true)
+          return resolve(true)
         } else {
           if (level === 0) {
             state.percent = 10
           }
-          reject(new Error('密码强度不够'))
+          return reject(new Error('密码强度不够'))
         }
       })
     }
 
-    const handlePhoneCheck = (rule: [], value: any, callback: Function) => {
+    const handlePhoneCheck = (rule: [], value: any) => {
       console.log('handlePhoneCheck, rule:', rule)
       console.log('handlePhoneCheck, value', value)
       return Promise.resolve()
@@ -208,24 +208,16 @@ export default defineComponent({
     })
 
     const handlePasswordCheck = (rule: [], value: any) => {
-      const { validate } = useForm(form, passwordRules)
+      // const { validate } = useForm(form, passwordRules)
       const password = form.password
-      return new Promise((resolve, reject) => {
-        validate(['password'])
-          .then(() => {
-            console.log('value', value)
-            if (value === undefined) {
-              return reject(new Error('请输入密码'))
-            }
-            if (value && password && value.trim() !== password.trim()) {
-              return reject(new Error('两次密码不一致'))
-            }
-            return resolve(true)
-          })
-          .catch(() => {
-            return resolve(true)
-          })
-      })
+      console.log('value', value)
+      if (value === undefined) {
+        return Promise.reject(new Error('请输入密码'))
+      }
+      if (value && password && value.trim() !== password.trim()) {
+        return Promise.reject(new Error('两次密码不一致'))
+      }
+      return Promise.resolve(true)
     }
     const rules = reactive({
       email: [{ required: true, type: 'email', message: '请输入邮箱地址' }],
@@ -234,21 +226,19 @@ export default defineComponent({
         {
           required: true,
           message: '至少6位密码，区分大小写',
-          validator: handlePasswordCheck,
-          validateTrigger: ['change', 'blur']
+          validator: handlePasswordCheck
         }
       ],
       mobile: [
         {
           required: true,
           message: '请输入正确的手机号',
-          pattern: /^1[3456789]\d{9}$/,
           validator: handlePhoneCheck,
           validateTrigger: ['change', 'blur']
         }
       ],
       captcha: [
-        { required: true, message: '请输入验证码', validateTrigger: 'blur' }
+        { required: true, message: '请输入验证码' }
       ]
     })
     const { validate, validateInfos } = useForm(form, rules)
