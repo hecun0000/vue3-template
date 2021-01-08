@@ -6,7 +6,7 @@
         <a-input
           size="large"
           type="text"
-          v-model.value="form.email"
+          v-model:value="form.email"
           placeholder="邮箱"
         ></a-input>
       </a-form-item>
@@ -15,7 +15,7 @@
         placement="rightTop"
         :trigger="['focus']"
         :getPopupContainer="(trigger) => trigger.parentElement"
-        v-model.value="state.passwordLevelChecked"
+        v-model:value="state.passwordLevelChecked"
       >
         <template v-slot:content>
           <div :style="{ width: '240px' }">
@@ -37,7 +37,7 @@
             size="large"
             @click="handlePasswordInputClick"
             placeholder="至少6位密码，区分大小写"
-            v-model.value="form.password"
+            v-model:value="form.password"
             autocomplete="off"
           ></a-input-password>
         </a-form-item>
@@ -48,12 +48,12 @@
           size="large"
           placeholder="确认密码"
           autocomplete="off"
-          v-model.value="form.password2"
+          v-model:value="form.password2"
         ></a-input-password>
       </a-form-item>
 
       <a-form-item v-bind="validateInfos.mobile">
-        <a-input size="large" placeholder="11 位手机号" v-model.value="form.mobile">
+        <a-input size="large" placeholder="11 位手机号" v-model:value="form.mobile">
           <template v-slot:addonBefore>
             <a-select size="large" defaultValue="+86">
               <a-select-option value="+86">+86</a-select-option>
@@ -73,7 +73,7 @@
       <a-row :gutter="16">
         <a-col class="gutter-row" :span="16">
           <a-form-item v-bind="validateInfos.captcha">
-            <a-input size="large" type="text" placeholder="验证码"  v-model.value="form.captcha">
+            <a-input size="large" type="text" placeholder="验证码"  v-model:value="form.captcha">
               <template v-slot:prefix>
                 <MailOutlined :style="{ color: 'rgba(0,0,0,.25)' }"/>
               </template>
@@ -138,6 +138,13 @@ export default defineComponent({
     MailOutlined
   },
   setup () {
+    const form = reactive({
+      email: '',
+      password: '',
+      password2: '',
+      captcha: '',
+      mobile: ''
+    })
     const state: StateParams = reactive({
       time: 60,
       smsSendBtn: false,
@@ -183,18 +190,12 @@ export default defineComponent({
     }
 
     const handlePhoneCheck = (rule: [], value: any) => {
-      console.log('handlePhoneCheck, rule:', rule)
-      console.log('handlePhoneCheck, value', value)
-      return Promise.resolve()
+      if (/^1\d{10}$/.test(value)) {
+        return Promise.resolve()
+      } else {
+        return Promise.reject(new Error('手机号码格式不正确'))
+      }
     }
-
-    const form = reactive({
-      email: '',
-      password: '',
-      password2: '',
-      captcha: '',
-      mobile: ''
-    })
 
     const passwordRules = reactive({
       password: [
@@ -202,7 +203,7 @@ export default defineComponent({
           required: true,
           message: '至少6位密码，区分大小写',
           validator: handlePasswordLevel,
-          validateTrigger: ['change', 'blur']
+          trigger: ['change', 'blur']
         }
       ]
     })
@@ -234,7 +235,7 @@ export default defineComponent({
           required: true,
           message: '请输入正确的手机号',
           validator: handlePhoneCheck,
-          validateTrigger: ['change', 'blur']
+          trigger: ['change', 'blur']
         }
       ],
       captcha: [

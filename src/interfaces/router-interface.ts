@@ -8,7 +8,7 @@ export interface CustomRouteConfig extends Omit<RouteRecordRaw, 'children'> {
   hideChildrenInMenu?: boolean;
 
   hidden?: boolean;
-  children? : CustomRouteConfig[]
+  children? : CustomRouteConfig[];
 }
 
 export interface Meta {
@@ -19,4 +19,5 @@ export interface Meta {
   permission?: any;
   show?: boolean;
   hideChildren?: boolean;
+  keepAlive?: boolean;
 }

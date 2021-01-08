@@ -13,32 +13,35 @@
   </a-result>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent, onMounted, ref, reactive, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+
+export default defineComponent({
   name: 'RegisterResult',
-  data () {
-    return {
-      description: '激活邮件已发送到你的邮箱中，邮件有效期为24小时。请及时登录邮箱，点击邮件中的链接激活帐户。',
-      form: {}
-    }
-  },
-  computed: {
-    email () {
-      const v = (this.form && this.form.email) || 'xxx'
+  setup () {
+    let form = reactive<any>({ email: '' })
+    const route = useRoute()
+    const router = useRouter()
+    const description = ref('激活邮件已发送到你的邮箱中，邮件有效期为24小时。请及时登录邮箱，点击邮件中的链接激活帐户。')
+
+    const email = computed(() => {
+      const v = (form && form.email) || 'xxx'
       return `你的账户：${v} 注册成功`
-    }
-  },
-  mounted () {
-    this.form = this.$route.params
-  },
-  methods: {
-    goHomeHandle () {
-      this.$router.push({ name: 'login' })
+    })
+
+    const goHomeHandle = () => router.push({ name: 'login' })
+
+    onMounted(() => {
+      form = route.params
+    })
+
+    return {
+      form,
+      description,
+      email,
+      goHomeHandle
     }
   }
-}
+})
 </script>
-
-<style scoped>
-
-</style>

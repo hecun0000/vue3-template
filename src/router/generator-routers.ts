@@ -2,7 +2,7 @@
 import * as loginService from '@/api/login'
 // eslint-disable-next-line
 import { BasicLayout, BlankLayout, PageView, RouteView } from '@/layouts'
-import { NavItemProps } from "../mock/services/user";
+import { NavItemProps } from '../mock/services/user'
 import { CustomRouteConfig } from '../interfaces/router-interface'
 
 interface routerMap {
@@ -112,7 +112,7 @@ export const generatorDynamicRouter = (token: string) => {
  * @param parent
  * @returns {*}
  */
-export const generator = (routerMap:  CustomRouteConfig[], parent?: CustomRouteConfig): CustomRouteConfig[] => {
+export const generator = (routerMap: CustomRouteConfig[], parent?: CustomRouteConfig): CustomRouteConfig[] => {
   return routerMap.map((item: CustomRouteConfig) => {
     const { title, show, hideChildren, hiddenHeaderContent, target, icon } = item.meta || {}
     const key = (item.component || item.key) as string
@@ -164,7 +164,7 @@ export const generator = (routerMap:  CustomRouteConfig[], parent?: CustomRouteC
  * @param tree 树
  * @param parentId 父ID
  */
-const listToTree = (list: any, tree:any[], parentId: number) => {
+const listToTree = (list: any, tree: any[], parentId: number) => {
   list.forEach((item: any) => {
     // 判断是否为父级菜单
     if (item.parentId === parentId) {
